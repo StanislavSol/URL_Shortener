@@ -1,8 +1,6 @@
 <header class="flex-shrink-0">
-{% if messages %}
-  {% for category, message in messages %}
+{% if message %}
   <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
-  {% endfor %}
   {% endif %}
   {% include "components/nav.html" %}
 </header>

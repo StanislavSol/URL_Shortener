@@ -8,7 +8,7 @@ from shortener_app.crud import get_url
 START_INDEX = 4
 
 
-def normalize_url(data, db):
+async def normalize_url(data, db):
     url, key = data.split('&')
     url_parse = unquote(unquote(url[START_INDEX:]))
     key_parse = unquote(unquote(key[START_INDEX:]))
@@ -16,10 +16,11 @@ def normalize_url(data, db):
     if key_parse:
         return url_parse, key_parse
     else:
-        return url_parse, create_unique_random_key(db)
+        unique_key = await create_unique_random_key(db)
+        return url_parse, unique_key
 
 
-def get_error(url, key, db):
+async def get_error(url, key, db):
     error = {}
 
     if not url:
@@ -43,7 +44,7 @@ def get_error(url, key, db):
             'url': url
         }
 
-    check_key = get_url(key, db)
+    check_key = await get_url(key, db)
     if check_key:
         return {
             'message': 'Такой ключ уже существует! Укажите другой ключ.',

@@ -10,8 +10,9 @@
             <h1 class="display-3">URL сокращатор</h1>
             <p class="lead">Сервис для сокращения URL</p>
             <form action="/" method="post" class="d-flex justify-content-center" required>
-                <input type="text" name="url" placeholder="https://www.example.com" value="{{ url }}" class="form-control form-control-lg">
-                <input type="text" name="key" placeholder="Уникальный ключ" value="{{ key }}" class="form-control form-control-lg">
+                <input type="text" name="url" placeholder="https://your.url" value="{{ url }}" class="form-control form-control-lg">
+                <p><h2>/</h2></p>
+                <input type="text" name="key" placeholder="custom back-half" value="{{ key }}" class="form-control form-control-lg"> 
                 <input type="submit" class="btn btn-primary  btn-lg ms-3 px-5 text-uppercase mx-3" value="Сократить">
             </form>
         </div>

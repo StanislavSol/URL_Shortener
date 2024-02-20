@@ -1,6 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Column, Integer, String
+from shortener_app.database import Base
 
-from .database import Base
 
 class URL(Base):
     __tablename__ = "urls"

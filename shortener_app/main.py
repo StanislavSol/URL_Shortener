@@ -1,27 +1,19 @@
 from fastapi import FastAPI, Request, Body, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from shortener_app.handlers_url import (
-                                        get_short_url,
-                                        normalize_url,
-                                        get_error,
-                                        )
+from shortener_app.handlers_url import normalize_url, get_error
+from shortener_app.crud import add_url_info, get_url, get_db
 from sqlalchemy.orm import Session
-from .database import SessionLocal, engine
-from . import models
-import secrets
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+BASE_URL = os.getenv('BASE_URL')
+
 
 app = FastAPI()
 templates = Jinja2Templates(directory="shortener_app/templates")
-models.Base.metadata.create_all(bind=engine)
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -33,51 +25,41 @@ async def index(request: Request):
 
 
 @app.post("/", response_class=HTMLResponse)
-async def post_urls(request: Request, data: str = Body(), db: Session = Depends(get_db)):
-    formatted_url = normalize_url(data)
-    validation_error = get_error(formatted_url)
+async def post_urls(
+        request: Request,
+        data: str = Body(),
+        db: Session = Depends(get_db)):
+
+    target_url, key = normalize_url(data, db)
+    validation_error = get_error(target_url, key, db)
+
     if validation_error:
-        flash = validation_error
+        context = validation_error
         return templates.TemplateResponse(
             request=request,
             name='index.html',
-            context=flash
+            context=context
         )
-    short_url = get_short_url(formatted_url)
 
+    url_key = add_url_info(target_url, key, db)
+    short_url = f'{BASE_URL}/{url_key}'
 
-    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    key = "".join(secrets.choice(chars) for _ in range(5))
-
-    db_url = models.URL(
-        target_url=formatted_url, key=key
-    )
-    db.add(db_url)
-    db.commit()
-    db.refresh(db_url)
-    db_url.url = key
-    print(db_url.url)
-
-    flash = {
+    context = {
         'message': f'Страница успешно сокращена: {short_url}',
-        'category': 'success'
+        'category': 'success',
     }
     return templates.TemplateResponse(
         request=request,
         name='index.html',
-        context=flash
+        context=context
     )
+
 
 @app.get("/{url_key}")
 def forward_to_target_url(
         url_key: str,
         request: Request,
-        db: Session = Depends(get_db)
-    ):
-    db_url = (
-        db.query(models.URL)
-        .filter(models.URL.key == url_key)
-        .first()
-    )
+        db: Session = Depends(get_db)):
+    db_url = get_url(url_key, db)
     if db_url:
         return RedirectResponse(db_url.target_url)

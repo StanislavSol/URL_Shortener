@@ -9,6 +9,7 @@ START_INDEX = 4
 
 
 async def normalize_url(data, db):
+    '''We bring the obtained data into normal form'''
     url, key = data.split('&')
     url_parse = unquote(unquote(url[START_INDEX:]))
     key_parse = unquote(unquote(key[START_INDEX:]))
@@ -21,6 +22,7 @@ async def normalize_url(data, db):
 
 
 async def get_error(url, key, db):
+    '''Checking data for correctness'''
     error = {}
 
     if not url:

@@ -7,6 +7,7 @@ models.Base.metadata.create_all(bind=engine)
 
 
 async def get_db():
+    '''Create a connection for database'''
     db = SessionLocal()
     try:
         yield db
@@ -15,6 +16,7 @@ async def get_db():
 
 
 async def add_url_info(url, key, db: Session):
+    '''Add data for database'''
     db_url = models.URL(
         target_url=url, key=key
     )
@@ -26,6 +28,7 @@ async def add_url_info(url, key, db: Session):
 
 
 async def get_url(url_key, db: Session):
+    '''Looking for data by key'''
     db_url = (
         db.query(models.URL)
         .filter(models.URL.key == url_key)

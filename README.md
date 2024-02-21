@@ -25,4 +25,4 @@ UI не нужен, достаточно сделать JSON API сервис.
 - Если вдруг будет желание, можно слепить простой UI и выложить сервис на бесплатный хостинг - Google Cloud, AWS и подобные.
 
 ### Установка
-_[Instructions for installing and running the app](INSTALLATION.md)_
+_[Инструкция для локального развертывания](INSTALLATION.md)_

@@ -1,7 +1,7 @@
 ## Install
 1. Clone the project repository to your local device:
 ```
-git@github.com:StanislavSol/URL_Shortener.git
+git clone git@github.com:StanislavSol/URL_Shortener.git
 
 ```
 2. Go to the project directory and install dependencies using Poetry:
